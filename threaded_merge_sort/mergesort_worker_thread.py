@@ -1,5 +1,5 @@
 import threading
-import logging
+
 #Bron https://www.youtube.com/watch?v=mc4BtkJ86Ww
 class MergeSort(threading.Thread):
 
@@ -11,8 +11,6 @@ class MergeSort(threading.Thread):
         
     
     def run(self):
-        #print that the thread is starting 
-        logging.info("Thread is starting between %s and %s", self.begin, self.end)
         if self.begin != self.end: # is this a one list?
             begin_ = self.begin 
             end_   = int((self.begin + self.end)/2)

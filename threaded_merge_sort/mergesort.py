@@ -1,6 +1,7 @@
 import concurrent.futures
 import time 
 import math 
+import random
 # Source for merge sort implementation:https://medium.com/@tuvo1106/merge-sort-in-python-5d9617fb9ee1
 # Python program for implementation of MergeSort 
   
@@ -34,14 +35,14 @@ def merge_sort(arr):
     right = arr[mid:len(arr)]
     return merge(merge_sort(left), merge_sort(right))
   
-# Determine by test the run-time complexity of your implementation when using 1, 2, 4, ... threads / processes. Plot this in a graph.
+# TODO Determine by test the run-time complexity of your implementation when using 1, 2, 4, ... threads / processes. Plot this in a graph.
 if __name__ == "__main__":
-        t1 = time.perf_counter()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            arr = [12, 11, 13, 5, 6, 7]
-            f1 = executor.submit(merge_sort,arr)
-            print(f1.result())
-        t2 = time.perf_counter()
+    t1 = time.perf_counter()
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        arr = [12, 11, 13, 5, 6, 7]
+        f1 = executor.submit(merge_sort,arr)
+        print(f1.result())
+    t2 = time.perf_counter()
 
     print("Finished in {} seconds".format(round(t2 - t1, 2)))
     
