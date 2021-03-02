@@ -1,83 +1,50 @@
 import concurrent.futures
 import time 
-import logging
-# Source for merge sort implementation: https://www.geeksforgeeks.org/python-program-for-merge-sort/
+import math 
+# Source for merge sort implementation:https://medium.com/@tuvo1106/merge-sort-in-python-5d9617fb9ee1
 # Python program for implementation of MergeSort 
   
  
-def merge(arr, l, m, r): 
-    # Merges two subarrays of arr[]. 
-    # First subarray is arr[l..m] 
-    # Second subarray is arr[m+1..r]
-    n1 = m - l + 1
-    n2 = r- m 
+def merge(list1, list2):
+    """Merges two sorted lists."""
+    left = 0
+    right = 0
+    res = []
+    while left < len(list1) and right < len(list2):
+        if list1[left] <= list2[right]:
+            res.append(list1[left])
+            left += 1
+        else:
+            res.append(list2[right])
+            right += 1
+    while left < len(list1):
+        res.append(list1[left])
+        left += 1
+    while right < len(list2):
+        res.append(list2[right])
+        right += 1
+    return res
   
-    # create temp arrays 
-    L = [0] * (n1) 
-    R = [0] * (n2) 
+def merge_sort(arr):
+    """Sorts a list using recursion and helper merge function."""
+    if len(arr) < 2:
+        return arr
+    mid = int(math.floor(len(arr) / 2))
+    left = arr[0:mid]
+    right = arr[mid:len(arr)]
+    return merge(merge_sort(left), merge_sort(right))
   
-    # Copy data to temp arrays L[] and R[] 
-    for i in range(0 , n1): 
-        L[i] = arr[l + i] 
-  
-    for j in range(0 , n2): 
-        R[j] = arr[m + 1 + j] 
-  
-    # Merge the temp arrays back into arr[l..r] 
-    i = 0     # Initial index of first subarray 
-    j = 0     # Initial index of second subarray 
-    k = l     # Initial index of merged subarray 
-  
-    while i < n1 and j < n2 : 
-        if L[i] <= R[j]: 
-            arr[k] = L[i] 
-            i += 1
-        else: 
-            arr[k] = R[j] 
-            j += 1
-        k += 1
-    
-        # Copy the remaining elements of L[], if there 
-    # are any 
-    while i < n1: 
-        arr[k] = L[i] 
-        i += 1
-        k += 1
-  
-    # Copy the remaining elements of R[], if there 
-    # are any 
-    while j < n2: 
-        arr[k] = R[j] 
-        j += 1
-        k += 1
-  
-# l is for left index and r is right index of the 
-# sub-array of arr to be sorted 
-def mergeSort(arr,l,r): 
-    if l < r: 
-  
-        # Same as (l+r)//2, but avoids overflow for 
-        # large l and h 
-        m = (l+(r-1))//2
-  
-        # Sort first and second halves 
-        mergeSort(arr, l, m) 
-        mergeSort(arr, m+1, r) 
-        merge(arr, l, m, r) 
-  
-  
+# Determine by test the run-time complexity of your implementation when using 1, 2, 4, ... threads / processes. Plot this in a graph.
 if __name__ == "__main__":
-    # format = "%(asctime)s: %(message)s"
-    # logging.basicConfig(format=format, level=logging.INFO,
-    #                     datefmt="%H:%M:%S")
+        t1 = time.perf_counter()
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            arr = [12, 11, 13, 5, 6, 7]
+            f1 = executor.submit(merge_sort,arr)
+            print(f1.result())
+        t2 = time.perf_counter()
 
-    # logging.info("Testing update. Starting value is %d.", )
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        #for index in range(2):
-        arr = [12, 11, 13, 5, 6, 7]
-        f1 = executor.submit(mergeSort,arr, 0, len(arr))
-        print(f1.result())
-    # logging.info("Testing update. Ending value is %d.", )
+    print("Finished in {} seconds".format(round(t2 - t1, 2)))
+    
 
 
 
@@ -85,16 +52,5 @@ if __name__ == "__main__":
 
 
 
-
-# Driver code to test above 
-# arr = [12, 11, 13, 5, 6, 7] 
-# n = len(arr) 
-# print ("Given array is") 
-# for i in range(n): 
-#     print ("%d" %arr[i]), 
-  
-# mergeSort(arr,0,n-1) 
-# print ("\n\nSorted array is") 
-# for i in range(n): 
-#     print ("%d" %arr[i]), 
+ 
   
