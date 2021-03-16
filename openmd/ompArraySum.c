@@ -16,38 +16,43 @@ int main(int argc, char * argv[])
   double sum;
   double * a;
   int id;
+  double start;
+  double  end;
 
   if (argc != 2) {
     fprintf(stderr, "\n*** Usage: arraySum <inputFile>\n\n");
     exit(1);
   }
-//   Het basis idee is dat de master-thread de array leest, en daarna verdeeld over de verschillende beschikbare workers. 
-//   Elk van de worker processen zal het totaal van zijn toebedeelde stukje moeten berekenen.
-//    Door gebruik van Reduction dienen die stukjes dan weer bij elkaar gebracht te worden tot het eind resultaat.
-    double start = omp_get_wtime();
-    #pragma omp parallel private(id)
-    {
-            id = omp_get_thread_num();
 
-            if ( id == 0 ) {  // thread with ID 0 is master
-                readArray(argv[1], &a, &howMany);
-            }  
-                    // threads with IDs > 0 are workers 
-            #pragma omp barrier
-            int numThreads = omp_get_num_threads();
-            int size =(int) howMany/  numThreads ;
-            sum  +=  sumArray(a, size);
-            
-    }
-    double end = omp_get_wtime();
-            printf("Elasped time = %f sec\n", end - start);
-            printf("The sum of the values in the input file '%s' is %g\n",
-                    argv[1], sum);
+  // int n_threads[4] = {1, 2, 4, 8};
+
+  #pragma omp parallel private(id)
+  {
+    id = omp_get_thread_num();
+
+    if ( id == 0 ) {  // thread with ID 0 is master
+        readArray(argv[1], &a, &howMany);
+    }  
+            // threads with IDs > 0 are workers 
+    #pragma omp barrier
+
+    int numThreads = omp_get_num_threads();
+    int size =(int) howMany/  numThreads ;
+    
+    start = omp_get_wtime();
+    sum  +=  sumArray(a, size);
+    end = omp_get_wtime();
+    printf("Elasped time = %f sec\n", end - start);
+    printf("The sum of the values in the input file is %g\n",sum);
+  }
+
 
     free(a);
 
     return 0;
 }
+
+  
 
 
 /* readArray fills an array with values from a file.
@@ -98,11 +103,11 @@ void readArray(char * fileName, double ** a, int * n) {
 double sumArray(double * a, int numValues) {
   int i;
   double result = 0.0;
-
-  #pragma omp parallel for reduction(+:result)
+  #pragma omp parallel for reduction(+:result) 
    for (i = 0; i < numValues; i++) {
      result += a[i];
   }
 
   return result;
 }
+
